@@ -18,12 +18,14 @@ from wxcloudrun import views
 from django.conf.urls import url
 
 urlpatterns = (
+
+    # 读取消息
+    url(r'^api/get_message(/)?$', views.get_message),
+
     # 计数器接口
     url(r'^^api/count(/)?$', views.counter),
 
     # 获取主页
     url(r'(/)?$', views.index),
 
-    # 读取消息
-    url(r'^api/get_message(/)?$', views.get_message),
 )

@@ -91,7 +91,7 @@ def update_count(request):
                     json_dumps_params={'ensure_ascii': False})
 
 
-def get_message(request):
+def get_message(request, _):
     """
     读取消息
 
@@ -107,12 +107,16 @@ def get_message(request):
         }
     """
 
+    # 如果body 为空，则跳转主页
+    if request.body == b'':
+        return render(request, 'index.html')
+
     # 如果为测试消息，直接返回 200 success
     request_body = json.loads(request.body.decode('utf-8'))
     if "action" in request_body and request_body["action"] == "CheckContainerPath":
-        return JsonResponse({'code': 200, 'errorMsg': ''}, json_dumps_params={'ensure_ascii': False})
+        return JsonResponse({'code': 0, 'errorMsg': ''}, json_dumps_params={'ensure_ascii': False})
 
     if request_body["MsgType"] == "text":
-        return JsonResponse({'code': 200, 'data': '你好，欢迎来到云开发！'}, json_dumps_params={'ensure_ascii': False})
+        return JsonResponse({'code': 0, 'data': '你好，欢迎来到云开发！'}, json_dumps_params={'ensure_ascii': False})
     else:
-        return JsonResponse({'code': 200, 'data': '暂不支持此消息类型'}, json_dumps_params={'ensure_ascii': False})
+        return JsonResponse({'code': 0, 'data': '暂不支持此消息类型'}, json_dumps_params={'ensure_ascii': False})
