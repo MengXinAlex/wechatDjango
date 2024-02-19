@@ -76,15 +76,15 @@ DATABASES = {
         'OPTIONS': {'charset': 'utf8mb4'},
     },
 
-    'local': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mydb',
-        'USER': 'postgres',
-        'PASSWORD': '123',
-        'HOST': 'localhost',
-        'PORT': '5432',
-
-    }
+    # 'local': {
+    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #     'NAME': 'mydb',
+    #     'USER': 'postgres',
+    #     'PASSWORD': '123',
+    #     'HOST': 'localhost',
+    #     'PORT': '5432',
+    #
+    # }
 }
 
 # Password validation
