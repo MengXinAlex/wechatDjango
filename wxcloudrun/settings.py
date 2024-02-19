@@ -75,6 +75,16 @@ DATABASES = {
         'PASSWORD': os.environ.get("MYSQL_PASSWORD"),
         'OPTIONS': {'charset': 'utf8mb4'},
     }
+
+    'local': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django_demo',
+        'USER‘: 'root',
+        'PASSWORD’: '123456',
+        'HOST': 'localhost',
+        'PORT': '3306',
+
+    }
 }
 
 # Password validation

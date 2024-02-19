@@ -23,4 +23,7 @@ urlpatterns = (
 
     # 获取主页
     url(r'(/)?$', views.index),
+
+    # 读取消息
+    url(r'^api/get_message(/)?$', views.get_message),
 )

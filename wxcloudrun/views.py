@@ -89,3 +89,30 @@ def update_count(request):
     else:
         return JsonResponse({'code': -1, 'errorMsg': 'action参数错误'},
                     json_dumps_params={'ensure_ascii': False})
+
+
+def get_message(request):
+    """
+    读取消息
+
+    `` request `` 请求对象
+    request body:
+        {
+          "ToUserName": "gh_919b00572d95", // 小程序/公众号的原始ID，资源复用配置多个时可以区别消息是给谁的
+          "FromUserName": "oVneZ57wJnV-ObtCiGv26PRrOz2g", // 该小程序/公众号的用户身份openid
+          "CreateTime": 1651049934, // 消息时间
+          "MsgType": "text", // 消息类型
+          "Content": "回复文本", // 消息内容
+          "MsgId": 23637352235060880 // 唯一消息ID，可能发送多个重复消息，需要注意用此ID去重
+        }
+    """
+
+    # 如果为测试消息，直接返回 200 success
+    request_body = json.loads(request.body.decode('utf-8'))
+    if "action" in request_body and request_body["action"] == "CheckContainerPath":
+        return JsonResponse({'code': 200, 'errorMsg': ''}, json_dumps_params={'ensure_ascii': False})
+
+    if request_body["MsgType"] == "text":
+        return JsonResponse({'code': 200, 'data': '你好，欢迎来到云开发！'}, json_dumps_params={'ensure_ascii': False})
+    else:
+        return JsonResponse({'code': 200, 'data': '暂不支持此消息类型'}, json_dumps_params={'ensure_ascii': False})
