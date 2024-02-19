@@ -1,7 +1,7 @@
 import json
 import logging
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from wxcloudrun.models import Counters
 
@@ -114,7 +114,7 @@ def get_message(request, _):
     # 如果为测试消息，直接返回 200 success
     request_body = json.loads(request.body.decode('utf-8'))
     if "action" in request_body and request_body["action"] == "CheckContainerPath":
-        return JsonResponse({'code': 0, 'errorMsg': ''}, json_dumps_params={'ensure_ascii': False})
+        return HttpResponse(status=200)
 
     if request_body["MsgType"] == "text":
         return JsonResponse({'code': 0, 'data': '你好，欢迎来到云开发！'}, json_dumps_params={'ensure_ascii': False})
