@@ -1,44 +1,125 @@
-# django-wechat-example
+# wxcloudrun-django
+[![GitHub license](https://img.shields.io/github/license/WeixinCloud/wxcloudrun-express)](https://github.com/WeixinCloud/wxcloudrun-express)
+![GitHub package.json dependency version (prod)](https://img.shields.io/badge/python-3.7.3-green)
 
-本项目使用django、celery、wechatpy开发微信公众号第三方平台的demo。
+微信云托管 python Django 框架模版，实现简单的计数器读写接口，使用云托管 MySQL 读写、记录计数值。
 
-
-操作说明
------------
-1. 假设第三方平台有如下配置
-
-    - 登录授权的发起页域名    somewebsite.cn
-    - 授权事件接收URL  http://www.somewebsite.cn/wechat/callback
-    - 公众号消息与事件接收URL    http://www.somewebsite.cn/wechat/server/$APPID$
-    - 网页开发域名    www.somewebsite.cn
-
-2. 修改 demo/settings.py
-    - COMPONENT_APP_ID = 'app_id'
-    - COMPONENT_APP_SECRET = '0c79eferferfeferf0cc0be99b20a18faeb'
-    - COMPONENT_APP_TOKEN = 'srgewgegerferf'
-    - COMPONENT_ENCODINGAESKEY = 'bz5LSXhcaIBIBKJWZpk2tRl4fiBVbfPN5VlYgwXKTwp'
-    - AUTH_REDIRECT_URI = 'http://www.somewebsite.cn/wechat'
-
-3. 初始化Django项目
-    - python manage.py makemigrations
-    - python manage.py migrate
-    - \# 在 www.somewebsite.com主机上运行开发服务器
-    - sudo python manage.py runserver 0.0.0.0:80
-
-4. 打开浏览器测试一下
-    - 打开http://www.somewebsite.cn/wechat/auth，获得预授权链接
-    - 点击预授权链接，页面跳转到微信授权页面
-    - 用微信扫描页面上的二维码
-    - 在手机上选择要授权的公众号
-    - 授权成功，浏览器跳转到http://www.somewebsite.cn/wechat
-    - 授权过程完成
-
-5. 开始写自己的逻辑
+![](https://qcloudimg.tencent-cloud.cn/raw/be22992d297d1b9a1a5365e606276781.png)
 
 
-开发说明
---------
+## 快速开始
+前往 [微信云托管快速开始页面](https://developers.weixin.qq.com/miniprogram/dev/wxcloudrun/src/basic/guide.html)，选择相应语言的模板，根据引导完成部署。
 
-1. component和所有公众号的token信息会自动放入`caches['wechat']`中。要获取`component`对象，使用`wechat.utils.get_component`即可。
-2. 授权成功后，微信服务器会调用`AUTH_REDIRECT_URI`,将授权码带过来，`AUTH_REDIRECT_URI`会获得公众号的信息，并保存到Wechat模型中。
-3. 需要启动celery定时任务，以保证已授权的公众号的token不会失效。
+## 本地调试
+下载代码在本地调试，请参考[微信云托管本地调试指南](https://developers.weixin.qq.com/miniprogram/dev/wxcloudrun/src/guide/debug/)
+
+## 实时开发
+代码变动时，不需要重新构建和启动容器，即可查看变动后的效果。请参考[微信云托管实时开发指南](https://developers.weixin.qq.com/miniprogram/dev/wxcloudrun/src/guide/debug/dev.html)
+
+## Dockerfile最佳实践
+请参考[如何提高项目构建效率](https://developers.weixin.qq.com/miniprogram/dev/wxcloudrun/src/scene/build/speed.html)
+
+
+## 目录结构说明
+~~~
+.
+├── Dockerfile                  dockerfile
+├── README.md                   README.md文件
+├── container.config.json       模板部署「服务设置」初始化配置（二开请忽略）
+├── manage.py                   django项目管理文件 与项目进行交互的命令行工具集的入口
+├── requirements.txt            依赖包文件
+└── wxcloudrun                  app目录
+    ├── __init__.py             python项目必带  模块化思想
+    ├── apps.py                 自动生成文件apps.py
+    ├── asgi.py                 自动生成文件asgi.py, 异步服务网关接口
+    ├── migrations              数据移植（迁移）模块
+    ├── models.py               数据模块
+    ├── settings.py             项目的总配置文件  里面包含数据库 web应用 日志等各种配置
+    ├── templates               模版目录,包含主页index.html文件
+    ├── urls.py                 URL配置文件  Django项目中所有地址中（页面）都需要我们自己去配置其URL
+    ├── views.py                执行响应的代码所在模块  代码逻辑处理主要地点  项目大部分代码在此编写
+    └── wsgi.py                 自动生成文件wsgi.py, Web服务网关接口
+~~~
+
+
+## 服务 API 文档
+
+### `GET /api/count`
+
+获取当前计数
+
+#### 请求参数
+
+无
+
+#### 响应结果
+
+- `code`：错误码
+- `data`：当前计数值
+
+##### 响应结果示例
+
+```json
+{
+  "code": 0,
+  "data": 42
+}
+```
+
+#### 调用示例
+
+```
+curl https://<云托管服务域名>/api/count
+```
+
+
+
+### `POST /api/count`
+
+更新计数，自增或者清零
+
+#### 请求参数
+
+- `action`：`string` 类型，枚举值
+  - 等于 `"inc"` 时，表示计数加一
+  - 等于 `"clear"` 时，表示计数重置（清零）
+
+##### 请求参数示例
+
+```
+{
+  "action": "inc"
+}
+```
+
+#### 响应结果
+
+- `code`：错误码
+- `data`：当前计数值
+
+##### 响应结果示例
+
+```json
+{
+  "code": 0,
+  "data": 42
+}
+```
+
+#### 调用示例
+
+```
+curl -X POST -H 'content-type: application/json' -d '{"action": "inc"}' https://<云托管服务域名>/api/count
+```
+
+## 使用注意
+如果不是通过微信云托管控制台部署模板代码，而是自行复制/下载模板代码后，手动新建一个服务并部署，需要在「服务设置」中补全以下环境变量，才可正常使用，否则会引发无法连接数据库，进而导致部署失败。
+- MYSQL_ADDRESS
+- MYSQL_PASSWORD
+- MYSQL_USERNAME
+以上三个变量的值请按实际情况填写。如果使用云托管内MySQL，可以在控制台MySQL页面获取相关信息。
+
+
+## License
+
+[MIT](./LICENSE)
